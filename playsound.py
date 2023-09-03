@@ -85,6 +85,28 @@ def _handlePathOSX(sound):
         parts = sound.split('://', 1)
         return parts[0] + '://' + quote(parts[1].encode('utf-8')).replace(' ', '%20')
 
+def _handlePathOSX(sound):
+    sound = _canonicalizePath(sound)
+
+    if '://' not in sound:
+        if not sound.startswith('/'):
+            from os import getcwd
+            sound = getcwd() + '/' + sound
+        sound = 'file://' + sound
+
+    try:
+        # Don't double-encode it.
+        sound.encode('ascii')
+        return sound.replace(' ', '%20')
+    except UnicodeEncodeError:
+        try:
+            from urllib.parse import quote  # Try the Python 3 import first...
+        except ImportError:
+            from urllib import quote  # Try using the Python 2 import before giving up entirely...
+
+        parts = sound.split('://', 1)
+        return parts[0] + '://' + quote(parts[1].encode('utf-8')).replace(' ', '%20')
+
 
 def _playsoundOSX(sound, block = True):
     '''
@@ -238,7 +260,15 @@ else:
 
 del system
 
+def main():
+    from sys import argv
+    try:
+        print('Playing: {}'.format(argv[1]))
+        playsound(argv[1])
+        print('Done')
+    except IndexError:
+        raise PlaysoundException('File input not specified')
+
 if __name__ == '__main__':
     # block is always True if you choose to run this from the command line.
-    from sys import argv
-    playsound(argv[1])
+    main()

@@ -265,7 +265,6 @@ def main():
     try:
         print('Playing: {}'.format(argv[1]))
         playsound(argv[1])
-        print('Done')
     except IndexError:
         raise PlaysoundException('File input not specified')
 

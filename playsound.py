@@ -52,7 +52,7 @@ def _playsoundWin(sound, block = True):
 
     try:
         logger.debug('Starting')
-        winCommand(u'open {}'.format(sound))
+        winCommand(u'open {} type mpegvideo'.format(sound))
         winCommand(u'play {}{}'.format(sound, ' wait' if block else ''))
         logger.debug('Returning')
     finally:
